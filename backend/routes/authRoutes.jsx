@@ -10,4 +10,6 @@ router.post('/register',[
 ], registerUser);
 
 router.post('/login', loginUser);
-router.get('/verify-email/:token',verifyEmail)
+router.get('/verify-email/:token',verifyEmail);
+
+module.exports = router
