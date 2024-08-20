@@ -59,3 +59,23 @@ exports.verifyEmail = async (req, res) => {
         res.status(500).send({error: error.message});
     }
 }
+
+exports.loginUser = async (req, res) => {
+    const {email, password} = req.body;
+
+    try {
+        const user = await User.findOne({email});
+        if (!user || !(await bcrypt.compare(password, user.password))){
+            return res.status(401).json({message:'Invalid credentials'});
+        }
+
+        if (!user.isVerified) {
+            return res.status(401).json({message:'Please verify your email first'});
+        }
+
+        const token = jwt.sign({userId:user._id, name:user.name},process.env.SECRET,{expiresIn:'1h'});
+        res.json({token,name:user.name});
+    }catch (error) {
+         res.status(500).send({error: error.message});
+    }
+}
